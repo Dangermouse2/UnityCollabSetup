@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class PlayerMovement : MonoBehaviour
 {
@@ -126,6 +127,7 @@ public class PlayerMovement : MonoBehaviour
 
     private void Respawn()
     {
+        
         //Reset velocity so we don't spawn falling at 100mph at clip through ground!
         rb.linearVelocity = Vector2.zero;
 
@@ -133,6 +135,12 @@ public class PlayerMovement : MonoBehaviour
         animator.SetBool("death", false); //turn off death animation and go to idle
         transform.position = respawnPoint; //move to the respawn point
         GameManager.isDead = false; //allow our player to die again
+        if (GameManager.lives <= 0) 
+        {
+            GameManager.lives = 3;
+            GameManager.score = 0;
+            SceneManager.LoadScene("Intro");
+        }
     }
 
     private void OnCollisionEnter2D(Collision2D collision)
