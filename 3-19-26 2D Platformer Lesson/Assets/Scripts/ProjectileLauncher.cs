@@ -11,7 +11,7 @@ public class ProjectileLauncher : MonoBehaviour
 
     private void Update() //this happens at the framerate of the computer
     {
-        if(GameManager.isDead) return;
+        if(GameManager.isDead || GameManager.freezePlayer) return;
 
         if (Input.GetButton("Fire1") && Time.time >= nextFireTime) //if you are holding the fire button down (mouse left) AND the delay has been met or passed
         {

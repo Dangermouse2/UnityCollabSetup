@@ -80,8 +80,8 @@ public class PatrollingEnemy : MonoBehaviour
         Gizmos.DrawRay(transform.position, new Vector2(facingDirection*wallCheckDistance, 0f)); //create a raycast to hit the wall
         if(turnAtLedges == true)
         {
-            Vector2 startingRayPosition = new Vector2(transform.position.x + (facingDirection * ledgeCheckXOffset), transform.position.y);
             Gizmos.color = Color.blue; //a different color than the straight ahead ray
+            Vector2 startingRayPosition = new Vector2(transform.position.x + (facingDirection * ledgeCheckXOffset), transform.position.y);
             Gizmos.DrawRay(startingRayPosition, Vector2.down * ledgeCheckDistance); //draw a ray going down
         }
     }

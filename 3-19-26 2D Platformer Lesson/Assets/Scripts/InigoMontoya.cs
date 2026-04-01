@@ -37,6 +37,11 @@ public class InigoMontoya : MonoBehaviour
       //  StartCoroutine(BossPattern());
     }
 
+    private void OnBecameVisible()
+    {
+        StartBossFight();
+    }
+
     // ADD THIS NEW PUBLIC METHOD!
     // Because it is 'public', other scripts are allowed to press this "button"
     public void StartBossFight()
@@ -175,6 +180,8 @@ public class InigoMontoya : MonoBehaviour
             isDead = true;
             StopAllCoroutines(); // Stops the movement loop immediately
             rb.linearVelocity = Vector2.zero; // Stops sliding
+
+            GameManager.winGame = true; //Win the game!
 
             Destroy(gameObject, 0.5f);
         }

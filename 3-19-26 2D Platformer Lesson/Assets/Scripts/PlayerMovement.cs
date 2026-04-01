@@ -26,12 +26,12 @@ public class PlayerMovement : MonoBehaviour
     {
         rb = GetComponent<Rigidbody2D>(); //Get the component connected to player
         respawnPoint = transform.position; //Set the respawn point to wherever the scene starts
-        animator = GetComponentInChildren<Animator>(); //Make sure we are getting it in the child element
+        animator = GetComponentInChildren<Animator>(); //Make sure we are getting it in the child element        
     }
 
     private void Update() //Update at frame rate
     {
-        if (GameManager.isDead) //if we are dead
+        if (GameManager.isDead || GameManager.freezePlayer) //if we are dead
         {
             return; //leave the Update function before doing anything else
         }
@@ -137,9 +137,9 @@ public class PlayerMovement : MonoBehaviour
         GameManager.isDead = false; //allow our player to die again
         if (GameManager.lives <= 0) 
         {
-            GameManager.lives = 3;
+            GameManager.lives = 3; //If I don't reset the lives, they will stay at 0 because they are static
             GameManager.score = 0;
-            SceneManager.LoadScene("Intro");
+            SceneManager.LoadScene("MainMenu"); //Make sure the names match
         }
     }
 

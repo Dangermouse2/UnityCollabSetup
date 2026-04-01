@@ -6,5 +6,6 @@ public class GameManager : MonoBehaviour
     public static int lives = 3;
     public static int score = 0;
     public static bool isDead;
-
+    public static bool freezePlayer;
+    public static bool winGame;
 }
