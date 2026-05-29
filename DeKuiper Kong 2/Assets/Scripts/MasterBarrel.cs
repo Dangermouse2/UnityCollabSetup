@@ -3,7 +3,7 @@ using UnityEngine;
 
 public class MasterBarrel : MonoBehaviour
 {
-    public enum BarrelType { Standard, Wild, Blue }
+    public enum BarrelType { Standard, Wild, Blue, Cinematic }
 
     [Header("Barrel Settings")]
     [SerializeField] private BarrelType type = BarrelType.Standard;
@@ -37,41 +37,47 @@ public class MasterBarrel : MonoBehaviour
         GameObject playerObj = GameObject.FindGameObjectWithTag("Player");
         if (playerObj != null) targetPlayer = playerObj.transform;
 
-        // --- FIX: Setup Wild Barrels to be absolute ghosts to floors ---
         if (type == BarrelType.Wild)
         {
-            // Turn it into a trigger permanently so it passes right through girders!
             GetComponent<CircleCollider2D>().isTrigger = true;
-
-            // Turn off gravity because we will manually drive its terrifying descent
             rb.gravityScale = 0f;
 
-            // Pick a random chaotic starting horizontal push
-            float randomForwardSpeed = Random.Range(2f, maxHorizontalSpeed);
+            float randomForwardSpeed = Random.Range(-2f, maxHorizontalSpeed);
             rb.linearVelocity = new Vector2(rollDirection * randomForwardSpeed, -wildDownwardSpeed);
+        }
+        else if (type == BarrelType.Cinematic)
+        {
+            GetComponent<CircleCollider2D>().isTrigger = true;
+            rb.gravityScale = 0f;
+
+            GameObject oil = GameObject.FindGameObjectWithTag("OilDrum");
+            if (oil != null)
+            {
+                // --- FIX 1: Correct Direction Math (Destination - Origin) ---
+                Vector2 directionToDrum = (oil.transform.position - transform.position).normalized;
+
+                // Multiply by wild downward speed so it throws down fast!
+                rb.linearVelocity = directionToDrum * wildDownwardSpeed;
+            }
+            Debug.Log("Cinematic Intro Barrel Thrown!");
         }
         else
         {
-            // Normal and Blue barrels get their steady forward injection
             rb.linearVelocity = new Vector2(rollDirection * maxHorizontalSpeed * 0.6f, rb.linearVelocity.y);
         }
     }
 
     void FixedUpdate()
     {
-        // 1. FIX: Handle Visual Rotation based on Type
         if (type == BarrelType.Wild)
         {
-            // Spin constantly and wildly regardless of direction!
             transform.Rotate(0, 0, -wildRotationSpeed * Time.fixedDeltaTime);
         }
         else
         {
-            // Normal barrels roll naturally based on physical speed
             transform.Rotate(0, 0, -rb.linearVelocity.x * 3f);
         }
 
-        // 2. Drive Movement Logic based on Type
         switch (type)
         {
             case BarrelType.Standard:
@@ -101,34 +107,28 @@ public class MasterBarrel : MonoBehaviour
 
     private void HandleWildMovement()
     {
-        // FIX: Maintain a strict, terrifying downward speed, but preserve horizontal bounces
         rb.linearVelocity = new Vector2(rb.linearVelocity.x, -wildDownwardSpeed);
     }
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        // Note: Wild barrels ignore this completely now because they are Triggers!
-
-        // Bouncing off boundary walls flips direction
         if (collision.gameObject.CompareTag("Wall"))
         {
             rollDirection *= -1;
             rb.linearVelocity = new Vector2(rollDirection * maxHorizontalSpeed * 0.6f, rb.linearVelocity.y);
         }
 
-        // Landed on solid ground
         if (collision.gameObject.CompareTag("Ground") && isDroppingDownLadder)
         {
             LandedOnFloor();
         }
 
-        // Solid hit with player
         if (collision.gameObject.CompareTag("Player"))
         {
             HitPlayer(collision.gameObject);
         }
 
-        // Blue Barrel hits the Oil Drum
+        // Standard Blue Barrel hits the Oil Drum physically
         if (type == BarrelType.Blue && collision.gameObject.CompareTag("OilDrum"))
         {
             InstantiateFireballEnemy(collision.transform.position);
@@ -143,26 +143,31 @@ public class MasterBarrel : MonoBehaviour
             Destroy(gameObject);
         }
 
-        // FIX: If a Wild barrel hits a outer boundary wall, bounce it back trigger-style!
         if (collision.CompareTag("Wall") && type == BarrelType.Wild)
         {
             rollDirection *= -1;
             rb.linearVelocity = new Vector2(rollDirection * maxHorizontalSpeed * 0.8f, rb.linearVelocity.y);
         }
 
-        // Classic Arcade Ladder Drop Calculation (Only for normal rolling types)
         if ((type == BarrelType.Standard || type == BarrelType.Blue) && collision.CompareTag("LadderTop") && !isDroppingDownLadder)
         {
             CalculateLadderDrop(collision.transform.position.x);
         }
 
-        // Safety Net for normal barrels landing
         if (collision.CompareTag("Ground") && isDroppingDownLadder)
         {
             LandedOnFloor();
         }
 
-        // Trigger overlap hit with player (Works for ALL barrels now)
+        // --- FIX 2: Cinematic Barrel needs a Trigger check for the Oil Drum ---
+        if (type == BarrelType.Cinematic && collision.CompareTag("OilDrum"))
+        {
+            InstantiateFireballEnemy(collision.transform.position);
+            Destroy(gameObject);
+        }
+
+        if (!gameObject.activeInHierarchy) return;
+
         if (collision.CompareTag("Player"))
         {
             HitPlayer(collision.gameObject);
@@ -213,23 +218,18 @@ public class MasterBarrel : MonoBehaviour
         PlayerController player = playerObject.GetComponent<PlayerController>();
         if (player != null)
         {
+            if (player.IsHammering) return;
+
             Debug.Log("Hazard destroyed the player!");
-
-            // Notify the game manager instantly
             GameManager.Instance.PlayerDeath();
-
-            // Play player death animation or reset player position here
         }
     }
-
-
 
     private void InstantiateFireballEnemy(Vector3 spawnPos)
     {
         Debug.Log("Blue barrel ignited the oil drum! Spawning Fireball Enemy!");
         if (fireballPrefab != null)
         {
-            // Spawn the flame right at the location of the oil drum
             Instantiate(fireballPrefab, spawnPos, Quaternion.identity);
         }
     }

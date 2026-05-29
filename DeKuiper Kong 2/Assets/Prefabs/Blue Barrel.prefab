@@ -16,7 +16,7 @@ GameObject:
   - component: {fileID: -2691853831852553559}
   m_Layer: 10
   m_Name: Blue Barrel
-  m_TagString: Untagged
+  m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -130,13 +130,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MasterBarrel
   type: 2
-  baseRollForce: 4
-  maxHorizontalSpeed: 5
+  baseRollForce: 1
+  maxHorizontalSpeed: 1.5
   ladderDropSpeed: 1
   baseLadderDropChance: 0.2
   steeredLadderDropChance: 0.65
   fireballPrefab: {fileID: 8151596680532386622, guid: 414f843bdbc970446b730dbd304b8c28, type: 3}
-  wildDownwardSpeed: 6
+  wildDownwardSpeed: 5
   wildRotationSpeed: 500
   rollDirection: 1
 --- !u!58 &4308246569483421039

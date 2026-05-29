@@ -33,6 +33,9 @@ public class FireballEnemy : MonoBehaviour
 
     void FixedUpdate()
     {
+        // --- ARCADE CINEMATIC FREEZE: Lock input if the game introduction is playing ---
+        if (GameManager.Instance != null && !GameManager.Instance.IsGameActive()) return;
+
         HandleIntervalAI();
 
         if (isClimbing)
@@ -175,12 +178,13 @@ public class FireballEnemy : MonoBehaviour
         PlayerController player = playerObject.GetComponent<PlayerController>();
         if (player != null)
         {
+            // --- ARCADE PROTECTION: Don't kill the player if they are hammering! ---
+            if (player.IsHammering) return;
+
             Debug.Log("Hazard destroyed the player!");
 
             // Notify the game manager instantly
             GameManager.Instance.PlayerDeath();
-
-            // Play player death animation or reset player position here
         }
     }
 }

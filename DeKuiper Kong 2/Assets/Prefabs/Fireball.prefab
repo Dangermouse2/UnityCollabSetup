@@ -16,7 +16,7 @@ GameObject:
   - component: {fileID: -9025714740614039838}
   m_Layer: 9
   m_Name: Fireball
-  m_TagString: Untagged
+  m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -129,8 +129,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dc1ed760907f581458da7ef2d7ee0a30, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::FireballEnemy
-  speed: 2
-  ladderClimbSpeed: 1.5
+  speed: 0.3
+  ladderClimbSpeed: 0.75
   climbChance: 0.35
   midWalkFlipChance: 0.15
   ladderReverseChance: 0.1

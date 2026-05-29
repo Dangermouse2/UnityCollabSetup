@@ -12,6 +12,8 @@ TagManager:
   - LadderTop
   - LadderBottom
   - Goal
+  - Enemy
+  - ScoreZone
   layers:
   - Default
   - TransparentFX
@@ -24,7 +26,7 @@ TagManager:
   - OilBarrel
   - Enemies
   - Projectiles
-  - 
+  - CinematicHazard
   - 
   - 
   - 

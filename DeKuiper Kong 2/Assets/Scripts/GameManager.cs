@@ -1,5 +1,6 @@
-using UnityEngine;
 using System.Collections;
+using UnityEngine;
+using UnityEngine.Audio;
 using UnityEngine.SceneManagement; // <-- CRITICAL: Required to reload scenes!
 
 public class GameManager : MonoBehaviour
@@ -22,16 +23,25 @@ public class GameManager : MonoBehaviour
     [Header("Death Animation Settings")]
     [SerializeField] private float deathDelay = 2.5f; // How long the death animation takes to play
 
+    // --- NEW: VICTORY AUDIO SETTINGS ---
+    [Header("Victory Settings")]
+    [SerializeField] private AudioClip victorySound; // Assign your retro win tune here
+    [SerializeField] private float victoryDelay = 3.5f; // How long to wait before loading next level
+    [SerializeField] private AudioSource soundEffectsSource;
+
+    [Header("Music Settings")]
+    [SerializeField] private AudioSource musicSource; // Separate source dedicated to looping music
+    [SerializeField] private AudioClip mainTheme;
+    [SerializeField] private AudioClip hammerTheme;
+
     void Awake()
     {
         if (Instance == null)
         {
             Instance = this;
             DontDestroyOnLoad(gameObject);
-
-            // Subscribe to scene loading so the game automatically kickstarts 
-            // every time a scene finishes loading
             SceneManager.sceneLoaded += OnSceneLoaded;
+
         }
         else
         {
@@ -48,6 +58,35 @@ public class GameManager : MonoBehaviour
     void Start()
     {
         StartNewGame();
+    }
+
+    public void PlayMainTheme()
+    {
+        if (musicSource == null || mainTheme == null) return;
+
+        // Only swap if it isn't already playing (prevents music restarting tracking errors)
+        if (musicSource.clip == mainTheme && musicSource.isPlaying) return;
+
+        musicSource.clip = mainTheme;
+        musicSource.loop = true;
+        musicSource.Play();
+    }
+
+    public void PlayHammerTheme()
+    {
+        if (musicSource == null || hammerTheme == null) return;
+
+        musicSource.clip = hammerTheme;
+        musicSource.loop = true;
+        musicSource.Play();
+    }
+
+    public void StopMusic()
+    {
+        if (musicSource != null)
+        {
+            musicSource.Stop();
+        }
     }
 
     public void StartNewGame()
@@ -82,6 +121,8 @@ public class GameManager : MonoBehaviour
 
         Debug.Log("GO!");
         isGameActive = true;
+
+        PlayMainTheme();
     }
 
     void Update()
@@ -118,6 +159,8 @@ public class GameManager : MonoBehaviour
         if (!isGameActive) return;
         isGameActive = false;
 
+        StopMusic();
+
         playerLives--;
         Debug.Log($"Player Died! Lives remaining: {playerLives}");
 
@@ -125,17 +168,53 @@ public class GameManager : MonoBehaviour
         StartCoroutine(PlayerDeathSequenceRoutine());
     }
 
+    // --- REWORKED: LEVEL COMPLETE ROUTINE TIE-IN ---
     public void LevelComplete()
     {
         if (!isGameActive) return;
-        isGameActive = false;
+        isGameActive = false; // Freeze the game timer and interactions
 
+        StopMusic();
+
+        // Start the celebratory visual/audio delay sequence
+        StartCoroutine(LevelCompleteSequenceRoutine());
+    }
+
+    private IEnumerator LevelCompleteSequenceRoutine()
+    {
+        // 1. Play the magnificent victory music
+        if (soundEffectsSource != null && victorySound != null)
+        {
+            soundEffectsSource.PlayOneShot(victorySound);
+        }
+
+        // 2. Lock down the player so they strike an idle/victory pose
+        PlayerController player = Object.FindFirstObjectByType<PlayerController>();
+        if (player != null)
+        {
+            player.enabled = false; // Turn off inputs
+            Rigidbody2D playerRb = player.GetComponent<Rigidbody2D>();
+            if (playerRb != null) playerRb.linearVelocity = Vector2.zero; // Stop physics drift
+
+            Animator playerAnim = player.GetComponent<Animator>();
+            if (playerAnim != null)
+            {
+                playerAnim.SetBool("isWalking", false);
+                playerAnim.SetBool("isJumping", false);
+                playerAnim.SetBool("isClimbing", false);
+                // If you ever make a custom "win" animation state, you could trigger it here!
+            }
+        }
+
+        // 3. Process the score rewards
         int finalBonusAward = Mathf.FloorToInt(currentBonusTime);
         AddScore(finalBonusAward);
-
         Debug.Log($"Level Complete! Awarded {finalBonusAward} Bonus Points!");
 
-        // Reloads the level to advance/loop the game state
+        // 4. Let the victory sound play out completely
+        yield return new WaitForSeconds(victoryDelay);
+
+        // 5. Safely advance to the reloaded/next scene
         ReloadCurrentScene();
     }
 
@@ -151,14 +230,14 @@ public class GameManager : MonoBehaviour
 
     private IEnumerator PlayerDeathSequenceRoutine()
     {
-        // 1. Find the player controller and trigger their animation hook
+        // 1. Find the player controller and trigger their clean death routine
         PlayerController player = Object.FindFirstObjectByType<PlayerController>();
         if (player != null)
         {
-            // Disable player movement script inputs so they can't walk around while dead
-            player.enabled = false;
+            // --- FIX: Run the player's internal death system (PLAYS THE DEATH SOUND!) ---
+            player.Die();
 
-            // --- FIX: Change the body type to Kinematic to freeze all physics evaluations ---
+            // --- FIX: Force the body type to Kinematic to freeze all physics evaluations ---
             Rigidbody2D playerRb = player.GetComponent<Rigidbody2D>();
             if (playerRb != null)
             {
@@ -166,24 +245,17 @@ public class GameManager : MonoBehaviour
                 playerRb.bodyType = RigidbodyType2D.Kinematic; // <- ABSOLUTE LOCKDOWN
             }
 
-
             // Trigger the animation parameter!
             Animator playerAnim = player.GetComponent<Animator>();
             if (playerAnim != null)
             {
-                // --- FIX: Force the animator speed back to 1f so it can actually play! ---
                 playerAnim.speed = 1f;
-
                 playerAnim.SetBool("isDead", true);
-
-                // --- FIX: Force-clear active movement parameters so they don't fight the death state ---
                 playerAnim.SetBool("isClimbing", false);
-
-                
             }
         }
 
-        // 2. Wait for the animation to finish playing out on screen
+        // 2. Wait for the animation and audio to finish playing out on screen
         yield return new WaitForSeconds(deathDelay);
 
         // 3. Evaluate state and reload AFTER the delay has completely finished

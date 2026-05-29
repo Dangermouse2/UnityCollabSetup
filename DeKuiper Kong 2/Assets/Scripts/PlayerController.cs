@@ -1,28 +1,30 @@
 using UnityEngine;
+using UnityEngine.Audio;
 
 [RequireComponent(typeof(Rigidbody2D))]
 public class PlayerController : MonoBehaviour
 {
     [Header("Movement Speeds")]
-    public float walkSpeed = 4f;
-    public float climbSpeed = 3f;
-    public float jumpForce = 6.5f;
+    [SerializeField] private float walkSpeed = 4f;
+    [SerializeField] private float climbSpeed = 3f;
+    [SerializeField] private float jumpForce = 6.5f;
 
     [Header("Arcade Authenticity")]
     [Tooltip("If true, you cannot change direction or stop moving horizontally once in mid-air.")]
-    public bool classicCommitmentJump = true;
+    [SerializeField] private bool classicCommitmentJump = true;
 
     [Header("Environment Detection")]
-    public Transform groundCheck;
-    public LayerMask groundLayer;
-    public LayerMask ladderLayer;
-    public float checkRadius = 0.15f;
+    [SerializeField] private Transform groundCheck;
+    [SerializeField] private LayerMask groundLayer;
+    [SerializeField] private LayerMask ladderLayer;
+    [SerializeField] private float checkRadius = 0.15f;
 
     [Header("Hammer Power-Up")]
-    public float hammerDuration = 7f;
-    public LayerMask smashableLayer; // Set this to your Barrels/Enemies layer
-    public Transform hammerHitBox;   // Empty GameObject in front of player
-    public float hammerHitRadius = 0.4f;
+    [SerializeField] private float hammerDuration = 7f;
+    [SerializeField] private LayerMask smashableLayer;
+    [SerializeField] private Transform hammerHitBox;
+    [SerializeField] private float hammerHitRadius = 0.4f;
+    [SerializeField] private GameObject scorePrefab;
 
     // Internal State Tracking
     private Rigidbody2D rb;
@@ -32,7 +34,6 @@ public class PlayerController : MonoBehaviour
     private bool isGrounded;
     private bool isNearLadder;
     private bool isClimbing;
-    private bool isJumping;
     private float baseGravity;
     private float lockedJumpXVelocity;
     private Transform activeLadder;
@@ -41,6 +42,14 @@ public class PlayerController : MonoBehaviour
     // Hammer State
     private bool isHammering = false;
     private float hammerTimer = 0f;
+    public bool IsHammering => isHammering; // Public shortcut for hazard safety gates
+
+    [Header("Sound Effects")]
+    [SerializeField] private AudioClip smashSound;
+    [SerializeField] private AudioClip deathSound;
+    [SerializeField] private AudioClip jumpSound;
+    [SerializeField] private AudioClip barrelJumpSound; // Sound played when successfully jumping over a hazard
+    private AudioSource audioSource;
 
     // Climb Cooldown to prevent bottom-bouncing
     private float climbCooldownTimer = 0f;
@@ -58,13 +67,14 @@ public class PlayerController : MonoBehaviour
         rb.freezeRotation = true;
         rb.collisionDetectionMode = CollisionDetectionMode2D.Continuous;
 
+        audioSource = GetComponent<AudioSource>();
         animator = GetComponent<Animator>();
     }
 
     void Update()
     {
-        // --- ABSOLUTE SAFETY LOCK: If this script is disabled mid-frame, halt execution instantly! ---
-        if (!enabled) return;
+        // --- ARCADE CINEMATIC FREEZE: Lock input if the game introduction is playing ---
+        if (GameManager.Instance != null && !GameManager.Instance.IsGameActive()) return;
 
         // 1. Gather Inputs
         horizontalInput = Input.GetAxisRaw("Horizontal");
@@ -73,19 +83,14 @@ public class PlayerController : MonoBehaviour
         // 2. Environment Overlap Checks
         isGrounded = Physics2D.OverlapCircle(groundCheck.position, checkRadius, groundLayer);
 
-        // Center check for regular climbing/wandering off
         Collider2D centerLadderCollider = Physics2D.OverlapCircle(transform.position, checkRadius, ladderLayer);
-
-        // Foot check specifically for standing on top of a ladder trying to climb down
         Collider2D footLadderCollider = Physics2D.OverlapCircle(groundCheck.position, checkRadius, ladderLayer);
 
-        // We are near a ladder if either the center or the feet are touching it
         isNearLadder = (centerLadderCollider != null || footLadderCollider != null);
 
         if (centerLadderCollider != null) activeLadder = centerLadderCollider.transform;
         else if (footLadderCollider != null) activeLadder = footLadderCollider.transform;
 
-        // Subtract cooldown timer
         if (climbCooldownTimer > 0)
         {
             climbCooldownTimer -= Time.deltaTime;
@@ -94,15 +99,13 @@ public class PlayerController : MonoBehaviour
         // 3. Ladder Climbing Logic
         if (isNearLadder && !isHammering && climbCooldownTimer <= 0)
         {
-            // CASE A: Standard Climbing Up/Down while already on the ladder
             if (Mathf.Abs(verticalInput) > 0.1f && !isClimbing)
             {
-                // Prevent climbing DOWN if we are standing on the solid ground at the very BOTTOM of a ladder
                 if (verticalInput < -0.1f && isGrounded && activeLadder != null && groundCheck.position.y <= activeLadder.position.y)
                 {
                     // Do nothing
                 }
-                else if (verticalInput > 0.1f) // Climbing UP
+                else if (verticalInput > 0.1f)
                 {
                     isClimbing = true;
                     rb.gravityScale = 0;
@@ -111,19 +114,15 @@ public class PlayerController : MonoBehaviour
                 }
             }
 
-            // CASE B: Standing at the TOP of the ladder trying to initiate a climb DOWN
             if (verticalInput < -0.1f && !isClimbing && isGrounded && footLadderCollider != null)
             {
                 isClimbing = true;
                 rb.gravityScale = 0;
                 playerCollider.isTrigger = true;
-
-                // Snap to ladder X, and drop the player down slightly past the platform lip instantly
                 transform.position = new Vector3(activeLadder.position.x, transform.position.y - 0.2f, transform.position.z);
             }
         }
 
-        // If we wander off a ladder entirely
         if (isClimbing && !isNearLadder)
         {
             ExitClimbing();
@@ -134,7 +133,6 @@ public class PlayerController : MonoBehaviour
         {
             hammerTimer -= Time.deltaTime;
             if (hammerTimer <= 0) StopHammering();
-            else SmashCheck();
         }
 
         // 5. Sprite Flipping
@@ -150,6 +148,12 @@ public class PlayerController : MonoBehaviour
         if (Input.GetButtonDown("Jump") && isGrounded && !isClimbing && !isHammering)
         {
             rb.linearVelocity = new Vector2(rb.linearVelocity.x, jumpForce);
+
+            if (audioSource != null && jumpSound != null)
+            {
+                audioSource.PlayOneShot(jumpSound);
+            }
+
             if (classicCommitmentJump)
             {
                 lockedJumpXVelocity = horizontalInput * walkSpeed;
@@ -159,14 +163,17 @@ public class PlayerController : MonoBehaviour
 
     void FixedUpdate()
     {
-        // --- ABSOLUTE SAFETY LOCK: If this script is disabled mid-frame, halt physics updates instantly! ---
-        if (!enabled) return;
+        if (GameManager.Instance != null && !GameManager.Instance.IsGameActive())
+        {
+            // Force physics to a complete stop so the player doesn't slide during the intro
+            rb.linearVelocity = new Vector2(0f, rb.linearVelocity.y);
+            return;
+        }
 
         if (isClimbing)
         {
             rb.linearVelocity = new Vector2(0, verticalInput * climbSpeed);
 
-            // Only exit on ground contact if we are near the bottom half of the active ladder
             if (isGrounded && verticalInput < -0.1f && activeLadder != null && groundCheck.position.y <= activeLadder.position.y)
             {
                 ExitClimbing();
@@ -197,23 +204,100 @@ public class PlayerController : MonoBehaviour
         if (isClimbing) ExitClimbing();
         isHammering = true;
         hammerTimer = hammerDuration;
+
+        if (GameManager.Instance != null)
+        {
+            GameManager.Instance.PlayHammerTheme();
+        }
     }
 
     private void StopHammering()
     {
         isHammering = false;
+
+        if (GameManager.Instance != null && GameManager.Instance.IsGameActive())
+        {
+            GameManager.Instance.PlayMainTheme();
+        }
     }
 
-    private void SmashCheck()
+    public void SmashCheck()
     {
         if (hammerHitBox == null) return;
 
-        Collider2D[] hitObjects = Physics2D.OverlapCircleAll(hammerHitBox.position, hammerHitRadius, smashableLayer);
+        Collider2D[] hitObjects = Physics2D.OverlapCircleAll(hammerHitBox.position, hammerHitRadius);
+        bool hitSomething = false;
+
         foreach (Collider2D obj in hitObjects)
         {
-            Destroy(obj.gameObject);
-            Debug.Log("Smashed an obstacle!");
+            GameObject targetToDestroy = null;
+
+            // Checked both Enemy dynamically
+            if (obj.CompareTag("Enemy"))
+            {
+                targetToDestroy = obj.gameObject;
+            }
+            else if (obj.transform.parent != null &&
+                    obj.transform.parent.CompareTag("Enemy"))
+            {
+                targetToDestroy = obj.transform.parent.gameObject;
+            }
+
+            if (targetToDestroy == null) continue;
+
+            hitSomething = true;
+
+            if (scorePrefab != null)
+            {
+                Instantiate(scorePrefab, targetToDestroy.transform.position, Quaternion.identity);
+            }
+
+            targetToDestroy.SetActive(false);
+            Destroy(targetToDestroy);
+
+            if (GameManager.Instance != null)
+            {
+                GameManager.Instance.AddScore(300);
+            }
         }
+
+        if (hitSomething)
+        {
+            if (audioSource != null && smashSound != null)
+            {
+                audioSource.PlayOneShot(smashSound);
+            }
+
+            StartCoroutine(FreezeFrame(0.12f));
+        }
+    }
+
+    private System.Collections.IEnumerator FreezeFrame(float duration)
+    {
+        Time.timeScale = 0f;
+        yield return new WaitForSecondsRealtime(duration);
+        Time.timeScale = 1f;
+    }
+
+    // --- CALL THIS METHOD FROM YOUR GAMEMANAGER / HAZARD SCRIPT TO KILL THE PLAYER ---
+    public void Die()
+    {
+        if (audioSource != null && deathSound != null)
+        {
+            audioSource.PlayOneShot(deathSound);
+        }
+
+        // Halt physics completely
+        rb.linearVelocity = Vector2.zero;
+        rb.simulated = false;
+
+        // Update animations to stop walking/jumping states
+        animator.SetBool("isWalking", false);
+        animator.SetBool("isJumping", false);
+        animator.SetBool("isClimbing", false);
+
+        // Safely shut down this controller loop
+        enabled = false;
     }
 
     private void UpdateAnimations()
@@ -285,6 +369,25 @@ public class PlayerController : MonoBehaviour
         {
             CollectHammer();
             Destroy(collision.gameObject);
+        }
+
+        // --- RETRO REWARD DETECTOR ---
+        if (collision.CompareTag("ScoreZone"))
+        {
+            // Close down the zone immediately to prevent double scoring
+            collision.gameObject.SetActive(false);
+
+            if (audioSource != null && barrelJumpSound != null)
+            {
+                audioSource.PlayOneShot(barrelJumpSound);
+            }
+
+            if (GameManager.Instance != null)
+            {
+                GameManager.Instance.AddScore(100);
+            }
+
+            Debug.Log("Jumped over hazard! +100 Points");
         }
     }
 

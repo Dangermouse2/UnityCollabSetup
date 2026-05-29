@@ -8,6 +8,9 @@ public class BossController : MonoBehaviour
     public GameObject wildBarrelPrefab;
     public GameObject blueBarrelPrefab;
 
+    // --- NEW: Dedicated slot for the opening cinematic barrel ---
+    public GameObject introBlueBarrelPrefab;
+
     [Header("Spawning Configuration")]
     public Transform spawnPoint;
     public float spawnInterval = 3.5f;
@@ -18,16 +21,20 @@ public class BossController : MonoBehaviour
 
     private Animator animator;
     private float spawnTimer;
+    private bool hasThrownIntroBarrel = false; // Tracks if the intro happened
 
     void Start()
     {
         animator = GetComponent<Animator>();
         spawnTimer = spawnInterval;
+
+        // --- NEW: Trigger the cinematic throw immediately on load! ---
+        StartCoroutine(IntroThrowSequence());
     }
 
     void Update()
     {
-        // If the game isn't actively running (like during start delay or death), stop spawning!
+        // If the game isn't actively running (like during start delay or death), stop normal spawning!
         if (GameManager.Instance != null && !GameManager.Instance.IsGameActive()) return;
 
         spawnTimer -= Time.deltaTime;
@@ -37,6 +44,34 @@ public class BossController : MonoBehaviour
             StartCoroutine(ThrowBarrelSequence());
             // Reset timer with a tiny bit of arcade randomness so it isn't perfectly predictable
             spawnTimer = spawnInterval + Random.Range(-0.5f, 0.5f);
+        }
+    }
+
+    // --- NEW: Dedicated routine just for the opening cutscene drop ---
+    private IEnumerator IntroThrowSequence()
+    {
+        hasThrownIntroBarrel = true;
+
+        // Wait just a split second so the scene settles before Kong moves
+        yield return new WaitForSeconds(0.2f);
+
+        if (animator != null)
+        {
+            // You can use the same throw animation, or make a special "Drop" one later!
+            animator.SetTrigger("ThrowBarrel");
+        }
+
+        yield return new WaitForSeconds(barrelSpawnDelay);
+
+        if (introBlueBarrelPrefab != null && spawnPoint != null)
+        {
+            // Spawn the special cinematic barrel!
+            Instantiate(introBlueBarrelPrefab, spawnPoint.position, Quaternion.identity);
+            
+        }
+        else
+        {
+            Debug.LogWarning("Missing Intro Barrel Prefab in BossController!");
         }
     }
 
