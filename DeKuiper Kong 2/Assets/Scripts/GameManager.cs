@@ -31,8 +31,10 @@ public class GameManager : MonoBehaviour
 
     [Header("Music Settings")]
     [SerializeField] private AudioSource musicSource; // Separate source dedicated to looping music
-    [SerializeField] private AudioClip mainTheme;
-    [SerializeField] private AudioClip hammerTheme;
+    [SerializeField] private AudioClip mainTheme;       // Main Menu Theme
+    [SerializeField] private AudioClip hammerTheme;     // Power-up music
+    [SerializeField] private AudioClip girderStageMusic; // Level 1 Music
+    [SerializeField] private AudioClip rivetStageMusic;  // Level 2 Music
 
     void Awake()
     {
@@ -41,7 +43,6 @@ public class GameManager : MonoBehaviour
             Instance = this;
             DontDestroyOnLoad(gameObject);
             SceneManager.sceneLoaded += OnSceneLoaded;
-
         }
         else
         {
@@ -60,14 +61,30 @@ public class GameManager : MonoBehaviour
         StartNewGame();
     }
 
+    // --- FIXED: Dynamically selects track based on active scene ---
     public void PlayMainTheme()
     {
-        if (musicSource == null || mainTheme == null) return;
+        if (musicSource == null) return;
 
-        // Only swap if it isn't already playing (prevents music restarting tracking errors)
-        if (musicSource.clip == mainTheme && musicSource.isPlaying) return;
+        AudioClip clipToPlay = mainTheme; // Default fallback (Main Menu)
+        int currentBuildIndex = SceneManager.GetActiveScene().buildIndex;
 
-        musicSource.clip = mainTheme;
+        // Route the track based on which scene number is currently open
+        if (currentBuildIndex == 1)
+        {
+            clipToPlay = girderStageMusic;
+        }
+        else if (currentBuildIndex == 2)
+        {
+            clipToPlay = rivetStageMusic;
+        }
+
+        if (clipToPlay == null) return;
+
+        // Only swap if it isn't already playing (prevents music cutting itself off)
+        if (musicSource.clip == clipToPlay && musicSource.isPlaying) return;
+
+        musicSource.clip = clipToPlay;
         musicSource.loop = true;
         musicSource.Play();
     }
@@ -103,10 +120,37 @@ public class GameManager : MonoBehaviour
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
 
-    // This automatically fires the moment Unity finishes loading the scene
+    // --- NEW: Safe progression logic to advance to Level 2 and beyond ---
+    private void LoadNextLevel()
+    {
+        isGameActive = false;
+
+        // Calculate what the next scene index should be
+        int nextSceneIndex = SceneManager.GetActiveScene().buildIndex + 1;
+
+        // ARCADE LOOP: If we run past our final stage, loop back to Level 1!
+        if (nextSceneIndex >= SceneManager.sceneCountInBuildSettings)
+        {
+            nextSceneIndex = 1; // Loops back to Girder Stage (Assuming 0 is Main Menu)
+            Debug.Log("Game Loop Completed! Resetting cycle...");
+        }
+
+        SceneManager.LoadScene(nextSceneIndex);
+    }
+
+    // This automatically fires the moment Unity finishes loading any scene
     private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
-        StartCoroutine(LoadLevelRoutine());
+        // --- FIX: Title screen doesn't need a 3-second level countdown or gameplay activation! ---
+        if (scene.buildIndex == 0)
+        {
+            isGameActive = false;
+            PlayMainTheme(); // Instantly plays main menu music
+        }
+        else
+        {
+            StartCoroutine(LoadLevelRoutine());
+        }
     }
 
     private IEnumerator LoadLevelRoutine()
@@ -122,7 +166,7 @@ public class GameManager : MonoBehaviour
         Debug.Log("GO!");
         isGameActive = true;
 
-        PlayMainTheme();
+        PlayMainTheme(); // Will automatically select Level 1 or Level 2 tracks now
     }
 
     void Update()
@@ -146,14 +190,12 @@ public class GameManager : MonoBehaviour
         if (score > highScore)
         {
             highScore = score;
-            // Save it to disk instantly so the main menu can read it later!
             PlayerPrefs.SetInt("HighScore", highScore);
             PlayerPrefs.Save();
         }
         Debug.Log($"Score: {score} | High Score: {highScore}");
     }
 
-    // --- FIX: Streamlined PlayerDeath to hand off ALL control to the Coroutine ---
     public void PlayerDeath()
     {
         if (!isGameActive) return;
@@ -164,37 +206,34 @@ public class GameManager : MonoBehaviour
         playerLives--;
         Debug.Log($"Player Died! Lives remaining: {playerLives}");
 
-        // Let the coroutine handle the visual delay AND the ultimate decision to reload or Game Over!
         StartCoroutine(PlayerDeathSequenceRoutine());
     }
 
-    // --- REWORKED: LEVEL COMPLETE ROUTINE TIE-IN ---
     public void LevelComplete()
     {
         if (!isGameActive) return;
-        isGameActive = false; // Freeze the game timer and interactions
+        isGameActive = false;
 
         StopMusic();
 
-        // Start the celebratory visual/audio delay sequence
         StartCoroutine(LevelCompleteSequenceRoutine());
     }
 
     private IEnumerator LevelCompleteSequenceRoutine()
     {
-        // 1. Play the magnificent victory music
+        // 1. Play the victory music
         if (soundEffectsSource != null && victorySound != null)
         {
             soundEffectsSource.PlayOneShot(victorySound);
         }
 
-        // 2. Lock down the player so they strike an idle/victory pose
+        // 2. Lock down the player
         PlayerController player = Object.FindFirstObjectByType<PlayerController>();
         if (player != null)
         {
-            player.enabled = false; // Turn off inputs
+            player.enabled = false;
             Rigidbody2D playerRb = player.GetComponent<Rigidbody2D>();
-            if (playerRb != null) playerRb.linearVelocity = Vector2.zero; // Stop physics drift
+            if (playerRb != null) playerRb.linearVelocity = Vector2.zero;
 
             Animator playerAnim = player.GetComponent<Animator>();
             if (playerAnim != null)
@@ -202,7 +241,6 @@ public class GameManager : MonoBehaviour
                 playerAnim.SetBool("isWalking", false);
                 playerAnim.SetBool("isJumping", false);
                 playerAnim.SetBool("isClimbing", false);
-                // If you ever make a custom "win" animation state, you could trigger it here!
             }
         }
 
@@ -214,8 +252,8 @@ public class GameManager : MonoBehaviour
         // 4. Let the victory sound play out completely
         yield return new WaitForSeconds(victoryDelay);
 
-        // 5. Safely advance to the reloaded/next scene
-        ReloadCurrentScene();
+        // 5. --- UPDATED: Advance to the next scene index rather than reloading! ---
+        LoadNextLevel();
     }
 
     private void GameOver()
@@ -225,27 +263,23 @@ public class GameManager : MonoBehaviour
         playerLives = 3;
         score = 0;
 
-        SceneManager.LoadScene(0);
+        SceneManager.LoadScene(0); // Take us back to Main Menu
     }
 
     private IEnumerator PlayerDeathSequenceRoutine()
     {
-        // 1. Find the player controller and trigger their clean death routine
         PlayerController player = Object.FindFirstObjectByType<PlayerController>();
         if (player != null)
         {
-            // --- FIX: Run the player's internal death system (PLAYS THE DEATH SOUND!) ---
             player.Die();
 
-            // --- FIX: Force the body type to Kinematic to freeze all physics evaluations ---
             Rigidbody2D playerRb = player.GetComponent<Rigidbody2D>();
             if (playerRb != null)
             {
                 playerRb.linearVelocity = Vector2.zero;
-                playerRb.bodyType = RigidbodyType2D.Kinematic; // <- ABSOLUTE LOCKDOWN
+                playerRb.bodyType = RigidbodyType2D.Kinematic;
             }
 
-            // Trigger the animation parameter!
             Animator playerAnim = player.GetComponent<Animator>();
             if (playerAnim != null)
             {
@@ -255,10 +289,8 @@ public class GameManager : MonoBehaviour
             }
         }
 
-        // 2. Wait for the animation and audio to finish playing out on screen
         yield return new WaitForSeconds(deathDelay);
 
-        // 3. Evaluate state and reload AFTER the delay has completely finished
         if (playerLives > 0)
         {
             ReloadCurrentScene();
@@ -269,7 +301,6 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    // Public getters for UI
     public int GetScore() => score;
     public int GetHighScore() => highScore;
     public int GetLives() => playerLives;

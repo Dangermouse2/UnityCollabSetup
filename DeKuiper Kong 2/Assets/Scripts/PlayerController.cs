@@ -105,7 +105,7 @@ public class PlayerController : MonoBehaviour
                 {
                     // Do nothing
                 }
-                else if (verticalInput > 0.1f)
+                else if (verticalInput > 0.1f && centerLadderCollider != null)
                 {
                     isClimbing = true;
                     rb.gravityScale = 0;

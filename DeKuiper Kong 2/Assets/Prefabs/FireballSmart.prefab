@@ -15,7 +15,7 @@ GameObject:
   - component: {fileID: 4902505247255463849}
   - component: {fileID: -9025714740614039838}
   m_Layer: 9
-  m_Name: Fireball
+  m_Name: FireballSmart
   m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -129,14 +129,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dc1ed760907f581458da7ef2d7ee0a30, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::FireballEnemy
-  speed: 0.3
+  speed: 0.4
   ladderClimbSpeed: 0.75
   groundLayer:
     serializedVersion: 2
     m_Bits: 8
   edgeCheckOffset: 0.3
   edgeCheckLength: 0.5
-  isSmartRivetAI: 0
+  isSmartRivetAI: 1
   climbChance: 0.35
   midWalkFlipChance: 0.15
   ladderReverseChance: 0.1

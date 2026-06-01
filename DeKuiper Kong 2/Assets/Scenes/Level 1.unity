@@ -3899,7 +3899,7 @@ Camera:
     serializedVersion: 2
     x: 0
     y: 0
-    width: 0.99956083
+    width: 0.99978
     height: 1
   near clip plane: 0.3
   far clip plane: 1000
@@ -4373,7 +4373,7 @@ MonoBehaviour:
   introBlueBarrelPrefab: {fileID: 951491239922715823, guid: 851589f81795da54bbe8a8ab787efb50, type: 3}
   spawnPoint: {fileID: 1484758651}
   spawnInterval: 3.5
-  barrelSpawnDelay: 0.4
+  barrelSpawnDelay: 0.3
 --- !u!1 &1243293522
 GameObject:
   m_ObjectHideFlags: 0
@@ -7557,6 +7557,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 4533514630285780260, guid: 405188b53ea61c84d8336651f281edab, type: 3}
+      propertyPath: m_Layer
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 6279027676372274004, guid: 405188b53ea61c84d8336651f281edab, type: 3}
       propertyPath: m_LocalPosition.y
       value: 0.15
@@ -7643,6 +7647,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 8300000, guid: be787fd51cd93c34e85b2ed5f52e46cf, type: 3}
     - target: {fileID: 8445744422207174850, guid: 0255056a7b57c9749bcf6f1bd46b7919, type: 3}
+      propertyPath: checkRadius
+      value: 0.09
+      objectReference: {fileID: 0}
+    - target: {fileID: 8445744422207174850, guid: 0255056a7b57c9749bcf6f1bd46b7919, type: 3}
       propertyPath: scorePrefab
       value: 
       objectReference: {fileID: 3296069239084607978, guid: 021a4a56bd2fe91459876121dfc666a2, type: 3}
@@ -7652,7 +7660,7 @@ PrefabInstance:
       objectReference: {fileID: 211137971}
     - target: {fileID: 8445744422207174850, guid: 0255056a7b57c9749bcf6f1bd46b7919, type: 3}
       propertyPath: hammerHitRadius
-      value: 0.27
+      value: 0.21
       objectReference: {fileID: 0}
     - target: {fileID: 8741077695159413650, guid: 0255056a7b57c9749bcf6f1bd46b7919, type: 3}
       propertyPath: m_Name
