@@ -58,25 +58,32 @@ public class GameManager : MonoBehaviour
 
     void Start()
     {
-        StartNewGame();
+        // --- FIX: Don't force auto-reset on frame 1. Just play music for whatever scene we started in!
+        PlayMainTheme();
     }
 
-    // --- FIXED: Dynamically selects track based on active scene ---
+    // --- FIXED: Fail-safe track routing using BOTH indices and Scene Strings ---
     public void PlayMainTheme()
     {
         if (musicSource == null) return;
 
         AudioClip clipToPlay = mainTheme; // Default fallback (Main Menu)
+
+        string sceneName = SceneManager.GetActiveScene().name.ToLower();
         int currentBuildIndex = SceneManager.GetActiveScene().buildIndex;
 
-        // Route the track based on which scene number is currently open
-        if (currentBuildIndex == 1)
+        // Route the track based on index OR scene name to bypass configuration errors
+        if (currentBuildIndex == 1 || sceneName.Contains("girder") || sceneName.Contains("level1"))
         {
             clipToPlay = girderStageMusic;
         }
-        else if (currentBuildIndex == 2)
+        else if (currentBuildIndex == 2 || sceneName.Contains("rivet") || sceneName.Contains("level2"))
         {
             clipToPlay = rivetStageMusic;
+        }
+        else if (currentBuildIndex == 0 || sceneName.Contains("menu") || sceneName.Contains("title"))
+        {
+            clipToPlay = mainTheme;
         }
 
         if (clipToPlay == null) return;
@@ -106,46 +113,48 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    // --- FIX: Called by your Main Menu UI "Play" button ---
     public void StartNewGame()
     {
         score = 0;
         playerLives = 3;
-        ReloadCurrentScene();
+
+        // Explicitly load Level 1 (Girder stage) instead of looping the menu scene!
+        SceneManager.LoadScene(1);
     }
 
     private void ReloadCurrentScene()
     {
         isGameActive = false;
-        // This grabs whatever scene is currently open and reloads it cleanly
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
 
-    // --- NEW: Safe progression logic to advance to Level 2 and beyond ---
     private void LoadNextLevel()
     {
         isGameActive = false;
 
-        // Calculate what the next scene index should be
         int nextSceneIndex = SceneManager.GetActiveScene().buildIndex + 1;
 
-        // ARCADE LOOP: If we run past our final stage, loop back to Level 1!
+        // ARCADE LOOP: Loop back to level 1 if we run out of stages
         if (nextSceneIndex >= SceneManager.sceneCountInBuildSettings)
         {
-            nextSceneIndex = 1; // Loops back to Girder Stage (Assuming 0 is Main Menu)
+            nextSceneIndex = 1;
             Debug.Log("Game Loop Completed! Resetting cycle...");
         }
 
         SceneManager.LoadScene(nextSceneIndex);
     }
 
-    // This automatically fires the moment Unity finishes loading any scene
     private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
-        // --- FIX: Title screen doesn't need a 3-second level countdown or gameplay activation! ---
-        if (scene.buildIndex == 0)
+        // --- FIX: INSTANTLY kill leftover audio from previous screens on arrival ---
+        StopMusic();
+
+        string sceneName = scene.name.ToLower();
+        if (scene.buildIndex == 0 || sceneName.Contains("menu") || sceneName.Contains("title"))
         {
             isGameActive = false;
-            PlayMainTheme(); // Instantly plays main menu music
+            PlayMainTheme(); // Instantly spin up main menu track
         }
         else
         {
@@ -158,15 +167,15 @@ public class GameManager : MonoBehaviour
         isGameActive = false;
         currentBonusTime = startingBonusTime;
 
+        // --- FIX: Start level-specific music IMMEDIATELY during the countdown panel! ---
+        PlayMainTheme();
+
         Debug.Log($"HOW HIGH CAN YOU GET? Level starting in {levelStartDelay} seconds...");
 
-        // This pause gives players a moment to breathe before hazards start spawning
         yield return new WaitForSeconds(levelStartDelay);
 
         Debug.Log("GO!");
         isGameActive = true;
-
-        PlayMainTheme(); // Will automatically select Level 1 or Level 2 tracks now
     }
 
     void Update()
@@ -221,13 +230,11 @@ public class GameManager : MonoBehaviour
 
     private IEnumerator LevelCompleteSequenceRoutine()
     {
-        // 1. Play the victory music
         if (soundEffectsSource != null && victorySound != null)
         {
             soundEffectsSource.PlayOneShot(victorySound);
         }
 
-        // 2. Lock down the player
         PlayerController player = Object.FindFirstObjectByType<PlayerController>();
         if (player != null)
         {
@@ -244,15 +251,12 @@ public class GameManager : MonoBehaviour
             }
         }
 
-        // 3. Process the score rewards
         int finalBonusAward = Mathf.FloorToInt(currentBonusTime);
         AddScore(finalBonusAward);
         Debug.Log($"Level Complete! Awarded {finalBonusAward} Bonus Points!");
 
-        // 4. Let the victory sound play out completely
         yield return new WaitForSeconds(victoryDelay);
 
-        // 5. --- UPDATED: Advance to the next scene index rather than reloading! ---
         LoadNextLevel();
     }
 

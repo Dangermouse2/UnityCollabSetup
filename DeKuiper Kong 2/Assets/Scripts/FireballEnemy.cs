@@ -8,7 +8,7 @@ public class FireballEnemy : MonoBehaviour
 
     // --- NEW: EDGE DETECTION VARIABLES ---
     [SerializeField] private LayerMask groundLayer;       // Set this to your "Ground" layer in the inspector
-    [SerializeField] private float edgeCheckOffset = 0.3f; // How far ahead of its body to look
+    [SerializeField] private float edgeCheckOffset = 0.1f; // How far ahead of its body to look
     [SerializeField] private float edgeCheckLength = 0.5f; // How far down to look for the floor
 
     // --- NEW: AI TYPE SWITCH ---
