@@ -1078,7 +1078,7 @@ MonoBehaviour:
   highScoreText: {fileID: 1318962406}
   promptText: {fileID: 125678318}
   flashInterval: 0.5
-  gameplaySceneName: GirderStage
+  gameplaySceneName: IntroVideo
 --- !u!114 &1252824283
 MonoBehaviour:
   m_ObjectHideFlags: 0
