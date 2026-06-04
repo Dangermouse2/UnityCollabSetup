@@ -5560,7 +5560,7 @@ Camera:
     serializedVersion: 2
     x: 0
     y: 0
-    width: 0.99978
+    width: 1
     height: 1
   near clip plane: 0.3
   far clip plane: 1000
@@ -10153,6 +10153,10 @@ PrefabInstance:
     - target: {fileID: 8445744422207174850, guid: 0255056a7b57c9749bcf6f1bd46b7919, type: 3}
       propertyPath: hammerHitRadius
       value: 0.21
+      objectReference: {fileID: 0}
+    - target: {fileID: 8445744422207174850, guid: 0255056a7b57c9749bcf6f1bd46b7919, type: 3}
+      propertyPath: lethalFallDistance
+      value: 1.25
       objectReference: {fileID: 0}
     - target: {fileID: 8741077695159413650, guid: 0255056a7b57c9749bcf6f1bd46b7919, type: 3}
       propertyPath: m_Name

@@ -9,11 +9,14 @@ EditorBuildSettings:
     path: Assets/Scenes/title.unity
     guid: 97fdc9bd71e57994db1edcc0cf9cf2ed
   - enabled: 1
-    path: Assets/Scenes/level1.unity
+    path: Assets/Scenes/GirderStage.unity
     guid: ac1ceeb348940eb4fb18e322e7777d8d
   - enabled: 1
-    path: Assets/Scenes/level2.unity
+    path: Assets/Scenes/RivetStage.unity
     guid: 8084dc96e5b484f4781e6978ef1ef8fc
+  - enabled: 1
+    path: Assets/Scenes/ElevatorStage.unity
+    guid: 94da1b51b166f4044bd85fc5c80648d5
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 2bcd2660ca9b64942af0de543d8d7100, type: 3}
   m_UseUCBPForAssetBundles: 0

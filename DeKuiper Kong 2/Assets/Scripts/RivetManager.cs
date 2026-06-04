@@ -25,7 +25,7 @@ public class RivetManager : MonoBehaviour
     public void RivetPopped()
     {
         totalRivets--;
-        Debug.Log($"Rivet Popped! Remaining: {totalRivets}");
+      //  Debug.Log($"Rivet Popped! Remaining: {totalRivets}");
 
         // Check for victory condition!
         if (totalRivets <= 0)

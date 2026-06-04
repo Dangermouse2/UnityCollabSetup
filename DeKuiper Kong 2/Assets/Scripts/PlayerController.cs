@@ -5,9 +5,9 @@ using UnityEngine.Audio;
 public class PlayerController : MonoBehaviour
 {
     [Header("Movement Speeds")]
-    [SerializeField] private float walkSpeed = 4f;
-    [SerializeField] private float climbSpeed = 3f;
-    [SerializeField] private float jumpForce = 6.5f;
+    [SerializeField] private float walkSpeed = 1f;
+    [SerializeField] private float climbSpeed = 1f;
+    [SerializeField] private float jumpForce = 3.5f;
 
     [Header("Arcade Authenticity")]
     [Tooltip("If true, you cannot change direction or stop moving horizontally once in mid-air.")]
@@ -25,6 +25,11 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private Transform hammerHitBox;
     [SerializeField] private float hammerHitRadius = 0.4f;
     [SerializeField] private GameObject scorePrefab;
+
+    [Header("Lethal Fall Settings")]
+    [Tooltip("How far the player can fall before dying. Tune this to be slightly taller than your standard jump arc.")]
+    [SerializeField] private float lethalFallDistance = 1.25f;
+    private float highestPointInAir;
 
     // Internal State Tracking
     private Rigidbody2D rb;
@@ -69,19 +74,64 @@ public class PlayerController : MonoBehaviour
 
         audioSource = GetComponent<AudioSource>();
         animator = GetComponent<Animator>();
+
+        // --- FIX 1: Initialize fall tracking safely on setup so it doesn't default to 0 ---
+        highestPointInAir = transform.position.y;
+        isGrounded = Physics2D.OverlapCircle(groundCheck.position, checkRadius, groundLayer);
     }
 
     void Update()
     {
-        // --- ARCADE CINEMATIC FREEZE: Lock input if the game introduction is playing ---
-        if (GameManager.Instance != null && !GameManager.Instance.IsGameActive()) return;
+        // --- ARCADE CINEMATIC FREEZE ---
+        if (GameManager.Instance != null && !GameManager.Instance.IsGameActive())
+        {
+            // --- FIX 2: Keep tracking position and ground state during the intro countdown ---
+            highestPointInAir = transform.position.y;
+            isGrounded = Physics2D.OverlapCircle(groundCheck.position, checkRadius, groundLayer);
+            return;
+        }
 
         // 1. Gather Inputs
         horizontalInput = Input.GetAxisRaw("Horizontal");
         verticalInput = Input.GetAxisRaw("Vertical");
 
         // 2. Environment Overlap Checks
+        bool wasGrounded = isGrounded;
         isGrounded = Physics2D.OverlapCircle(groundCheck.position, checkRadius, groundLayer);
+
+        // --- LETHAL FALL LOGIC ---
+        if (!isGrounded && !isClimbing)
+        {
+            if (transform.position.y > highestPointInAir)
+            {
+                highestPointInAir = transform.position.y;
+            }
+        }
+        else if (isClimbing)
+        {
+            highestPointInAir = transform.position.y;
+        }
+
+        // The exact frame we land, calculate the total fall distance
+        if (!wasGrounded && isGrounded)
+        {
+            float fallDistance = highestPointInAir - transform.position.y;
+
+            if (fallDistance >= lethalFallDistance)
+            {
+                Debug.Log($"Lethal fall! Fell {fallDistance} units.");
+                if (GameManager.Instance != null) GameManager.Instance.PlayerDeath();
+                return;
+            }
+
+            highestPointInAir = transform.position.y;
+        }
+
+        // --- Ledge Fall Fix ---
+        if (wasGrounded && !isGrounded && rb.linearVelocity.y <= 0)
+        {
+            lockedJumpXVelocity = horizontalInput * walkSpeed;
+        }
 
         Collider2D centerLadderCollider = Physics2D.OverlapCircle(transform.position, checkRadius, ladderLayer);
         Collider2D footLadderCollider = Physics2D.OverlapCircle(groundCheck.position, checkRadius, ladderLayer);
@@ -131,8 +181,7 @@ public class PlayerController : MonoBehaviour
         // 4. Hammer Timer Logic
         if (isHammering)
         {
-            hammerTimer -= Time.deltaTime;
-            if (hammerTimer <= 0) StopHammering();
+            blockHammerTimer();
         }
 
         // 5. Sprite Flipping
@@ -161,11 +210,16 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+    private void blockHammerTimer()
+    {
+        hammerTimer -= Time.deltaTime;
+        if (hammerTimer <= 0) StopHammering();
+    }
+
     void FixedUpdate()
     {
         if (GameManager.Instance != null && !GameManager.Instance.IsGameActive())
         {
-            // Force physics to a complete stop so the player doesn't slide during the intro
             rb.linearVelocity = new Vector2(0f, rb.linearVelocity.y);
             return;
         }
@@ -232,13 +286,11 @@ public class PlayerController : MonoBehaviour
         {
             GameObject targetToDestroy = null;
 
-            // Checked both Enemy dynamically
             if (obj.CompareTag("Enemy"))
             {
                 targetToDestroy = obj.gameObject;
             }
-            else if (obj.transform.parent != null &&
-                    obj.transform.parent.CompareTag("Enemy"))
+            else if (obj.transform.parent != null && obj.transform.parent.CompareTag("Enemy"))
             {
                 targetToDestroy = obj.transform.parent.gameObject;
             }
@@ -279,7 +331,6 @@ public class PlayerController : MonoBehaviour
         Time.timeScale = 1f;
     }
 
-    // --- CALL THIS METHOD FROM YOUR GAMEMANAGER / HAZARD SCRIPT TO KILL THE PLAYER ---
     public void Die()
     {
         if (audioSource != null && deathSound != null)
@@ -287,16 +338,13 @@ public class PlayerController : MonoBehaviour
             audioSource.PlayOneShot(deathSound);
         }
 
-        // Halt physics completely
         rb.linearVelocity = Vector2.zero;
         rb.simulated = false;
 
-        // Update animations to stop walking/jumping states
         animator.SetBool("isWalking", false);
         animator.SetBool("isJumping", false);
         animator.SetBool("isClimbing", false);
 
-        // Safely shut down this controller loop
         enabled = false;
     }
 
@@ -371,10 +419,8 @@ public class PlayerController : MonoBehaviour
             Destroy(collision.gameObject);
         }
 
-        // --- RETRO REWARD DETECTOR ---
         if (collision.CompareTag("ScoreZone"))
         {
-            // Close down the zone immediately to prevent double scoring
             collision.gameObject.SetActive(false);
 
             if (audioSource != null && barrelJumpSound != null)

@@ -1448,7 +1448,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 36a995b602e832b46a5725deaecdd25b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MovingElevator
-  moveSpeed: 2
+  moveSpeed: 1
   direction: 1
   bottomBoundary: {fileID: 1838750906}
   topBoundary: {fileID: 1395926843}
@@ -4025,7 +4025,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 36a995b602e832b46a5725deaecdd25b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MovingElevator
-  moveSpeed: 2
+  moveSpeed: 1
   direction: 1
   bottomBoundary: {fileID: 1838750906}
   topBoundary: {fileID: 1395926843}
@@ -4559,7 +4559,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 36a995b602e832b46a5725deaecdd25b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MovingElevator
-  moveSpeed: 2
+  moveSpeed: 1
   direction: -1
   bottomBoundary: {fileID: 1836732232}
   topBoundary: {fileID: 1992324558}
@@ -6035,10 +6035,10 @@ Camera:
   m_LensShift: {x: 0, y: 0}
   m_NormalizedViewPortRect:
     serializedVersion: 2
-    x: 0
+    x: 0.48015872
     y: 0
-    width: 0.99978
-    height: 1
+    width: 0.9594356
+    height: 0.96
   near clip plane: 0.3
   far clip plane: 1000
   field of view: 60
@@ -7059,7 +7059,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SpringSpawner
   springPrefab: {fileID: 951491239922715823, guid: f4f6a5a96b7590e44b4b9f59ba29929a, type: 3}
-  spawnInterval: 1.5
+  spawnInterval: 2
   initialDelay: 1
 --- !u!1 &1243293522
 GameObject:
@@ -8828,7 +8828,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 36a995b602e832b46a5725deaecdd25b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MovingElevator
-  moveSpeed: 2
+  moveSpeed: 1
   direction: -1
   bottomBoundary: {fileID: 1836732232}
   topBoundary: {fileID: 1992324558}
@@ -9378,7 +9378,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 36a995b602e832b46a5725deaecdd25b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MovingElevator
-  moveSpeed: 2
+  moveSpeed: 1
   direction: -1
   bottomBoundary: {fileID: 1836732232}
   topBoundary: {fileID: 1992324558}
@@ -11760,7 +11760,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 36a995b602e832b46a5725deaecdd25b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MovingElevator
-  moveSpeed: 2
+  moveSpeed: 1
   direction: 1
   bottomBoundary: {fileID: 1838750906}
   topBoundary: {fileID: 1395926843}
@@ -12101,13 +12101,21 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 23578707771169880, guid: 0255056a7b57c9749bcf6f1bd46b7919, type: 3}
+      propertyPath: m_Material
+      value: 
+      objectReference: {fileID: 6200000, guid: af05432782231c94399ab540af29a70a, type: 2}
+    - target: {fileID: 23578707771169880, guid: 0255056a7b57c9749bcf6f1bd46b7919, type: 3}
+      propertyPath: m_CollisionDetection
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 197774834958798224, guid: 0255056a7b57c9749bcf6f1bd46b7919, type: 3}
       propertyPath: m_LocalPosition.x
       value: -3.58
       objectReference: {fileID: 0}
     - target: {fileID: 197774834958798224, guid: 0255056a7b57c9749bcf6f1bd46b7919, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -2.92
+      value: -3.023
       objectReference: {fileID: 0}
     - target: {fileID: 197774834958798224, guid: 0255056a7b57c9749bcf6f1bd46b7919, type: 3}
       propertyPath: m_LocalPosition.z
@@ -12180,6 +12188,10 @@ PrefabInstance:
     - target: {fileID: 8445744422207174850, guid: 0255056a7b57c9749bcf6f1bd46b7919, type: 3}
       propertyPath: hammerHitRadius
       value: 0.21
+      objectReference: {fileID: 0}
+    - target: {fileID: 8445744422207174850, guid: 0255056a7b57c9749bcf6f1bd46b7919, type: 3}
+      propertyPath: lethalFallDistance
+      value: 1.25
       objectReference: {fileID: 0}
     - target: {fileID: 8741077695159413650, guid: 0255056a7b57c9749bcf6f1bd46b7919, type: 3}
       propertyPath: m_Name

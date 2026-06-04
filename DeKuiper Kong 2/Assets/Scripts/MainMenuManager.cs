@@ -11,7 +11,7 @@ public class MainMenuManager : MonoBehaviour
 
     [Header("Visual Settings")]
     [SerializeField] private float flashInterval = 0.5f; // Speed of flashing text
-    [SerializeField] private string gameplaySceneName = "level1"; // Name of your game level scene
+    [SerializeField] private string gameplaySceneName = "GirderStage"; // Name of your game level scene
 
     private bool isStarting = false;
 

@@ -192,6 +192,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c2aecd186af3a984bbabc4a85456e934, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BouncingSpring
-  horizontalSpeed: 2.5
-  bounceForce: 4
+  horizontalSpeed: 2.25
+  bounceForce: 4.25
   gravityScale: 1.5

@@ -1,7 +1,7 @@
 using System.Collections;
 using UnityEngine;
 using UnityEngine.Audio;
-using UnityEngine.SceneManagement; // <-- CRITICAL: Required to reload scenes!
+using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
@@ -12,6 +12,11 @@ public class GameManager : MonoBehaviour
     [SerializeField] private int score = 0;
     [SerializeField] private int highScore = 10000;
 
+    [Header("Arcade Level Loop Sequence")]
+    [Tooltip("Type your scene names exactly as they appear in your project folder to match the classic DK loop layout.")]
+    [SerializeField] private string[] levelSequence = { "GirderStage", "RivetStage", "GirderStage", "ElevatorStage", "RivetStage" };
+    private int currentSequenceIndex = 0;
+
     [Header("Arcade Timer Settings")]
     [SerializeField] private int startingBonusTime = 5000;
     private float currentBonusTime;
@@ -21,20 +26,20 @@ public class GameManager : MonoBehaviour
     [SerializeField] private float levelStartDelay = 3f;
 
     [Header("Death Animation Settings")]
-    [SerializeField] private float deathDelay = 2.5f; // How long the death animation takes to play
+    [SerializeField] private float deathDelay = 2.5f; 
 
-    // --- NEW: VICTORY AUDIO SETTINGS ---
     [Header("Victory Settings")]
-    [SerializeField] private AudioClip victorySound; // Assign your retro win tune here
-    [SerializeField] private float victoryDelay = 3.5f; // How long to wait before loading next level
+    [SerializeField] private AudioClip victorySound; 
+    [SerializeField] private float victoryDelay = 3.5f; 
     [SerializeField] private AudioSource soundEffectsSource;
 
     [Header("Music Settings")]
-    [SerializeField] private AudioSource musicSource; // Separate source dedicated to looping music
-    [SerializeField] private AudioClip mainTheme;       // Main Menu Theme
-    [SerializeField] private AudioClip hammerTheme;     // Power-up music
-    [SerializeField] private AudioClip girderStageMusic; // Level 1 Music
-    [SerializeField] private AudioClip rivetStageMusic;  // Level 2 Music
+    [SerializeField] private AudioSource musicSource; 
+    [SerializeField] private AudioClip mainTheme;       
+    [SerializeField] private AudioClip hammerTheme;     
+    [SerializeField] private AudioClip girderStageMusic; 
+    [SerializeField] private AudioClip elevatorStageMusic; // <-- NEW: Dedicated elevator track slot
+    [SerializeField] private AudioClip rivetStageMusic;  
 
     void Awake()
     {
@@ -52,43 +57,42 @@ public class GameManager : MonoBehaviour
 
     void OnDestroy()
     {
-        // Clean up our subscription if the manager is ever destroyed
         SceneManager.sceneLoaded -= OnSceneLoaded;
     }
 
     void Start()
     {
-        // --- FIX: Don't force auto-reset on frame 1. Just play music for whatever scene we started in!
         PlayMainTheme();
     }
 
-    // --- FIXED: Fail-safe track routing using BOTH indices and Scene Strings ---
+    // --- FIXED: Pure string name identification for smart music mapping ---
     public void PlayMainTheme()
     {
         if (musicSource == null) return;
 
-        AudioClip clipToPlay = mainTheme; // Default fallback (Main Menu)
+        AudioClip clipToPlay = mainTheme; 
 
         string sceneName = SceneManager.GetActiveScene().name.ToLower();
-        int currentBuildIndex = SceneManager.GetActiveScene().buildIndex;
 
-        // Route the track based on index OR scene name to bypass configuration errors
-        if (currentBuildIndex == 1 || sceneName.Contains("girder") || sceneName.Contains("level1"))
+        if (sceneName.Contains("girder"))
         {
             clipToPlay = girderStageMusic;
         }
-        else if (currentBuildIndex == 2 || sceneName.Contains("rivet") || sceneName.Contains("level2"))
+        else if (sceneName.Contains("elevator"))
+        {
+            clipToPlay = elevatorStageMusic;
+        }
+        else if (sceneName.Contains("rivet"))
         {
             clipToPlay = rivetStageMusic;
         }
-        else if (currentBuildIndex == 0 || sceneName.Contains("menu") || sceneName.Contains("title"))
+        else if (sceneName.Contains("menu") || sceneName.Contains("title"))
         {
             clipToPlay = mainTheme;
         }
 
         if (clipToPlay == null) return;
 
-        // Only swap if it isn't already playing (prevents music cutting itself off)
         if (musicSource.clip == clipToPlay && musicSource.isPlaying) return;
 
         musicSource.clip = clipToPlay;
@@ -107,54 +111,60 @@ public class GameManager : MonoBehaviour
 
     public void StopMusic()
     {
-        if (musicSource != null)
-        {
-            musicSource.Stop();
-        }
+        if (musicSource != null) musicSource.Stop();
     }
 
-    // --- FIX: Called by your Main Menu UI "Play" button ---
+    // --- FIXED: Explicitly resets sequence indexes when starting a clean playthrough ---
     public void StartNewGame()
     {
         score = 0;
         playerLives = 3;
+        currentSequenceIndex = 0;
 
-        // Explicitly load Level 1 (Girder stage) instead of looping the menu scene!
-        SceneManager.LoadScene(1);
+        if (levelSequence != null && levelSequence.Length > 0)
+        {
+            SceneManager.LoadScene(levelSequence[0]);
+        }
+        else
+        {
+            Debug.LogError("Level Sequence Array is empty on the GameManager component!");
+        }
     }
 
     private void ReloadCurrentScene()
     {
         isGameActive = false;
-        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+        // Re-loads by name string to bypass rigid build indices entirely
+        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
 
+    // --- FIXED: Handles the custom Arcade Loop sequence calculations ---
     private void LoadNextLevel()
     {
         isGameActive = false;
+        currentSequenceIndex++;
 
-        int nextSceneIndex = SceneManager.GetActiveScene().buildIndex + 1;
-
-        // ARCADE LOOP: Loop back to level 1 if we run out of stages
-        if (nextSceneIndex >= SceneManager.sceneCountInBuildSettings)
+        // ARCADE LOOP DETECTOR
+        if (currentSequenceIndex >= levelSequence.Length)
         {
-            nextSceneIndex = 1;
-            Debug.Log("Game Loop Completed! Resetting cycle...");
+            // Once the sequence array runs out, loop back to the start of Level 2 
+            // (Index 2 in our array is the second Girder stage sequence)
+            currentSequenceIndex = 2; 
+            Debug.Log("Arcade loop complete! Cycling back into advanced difficulty playlist...");
         }
 
-        SceneManager.LoadScene(nextSceneIndex);
+        SceneManager.LoadScene(levelSequence[currentSequenceIndex]);
     }
 
     private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
-        // --- FIX: INSTANTLY kill leftover audio from previous screens on arrival ---
         StopMusic();
 
         string sceneName = scene.name.ToLower();
-        if (scene.buildIndex == 0 || sceneName.Contains("menu") || sceneName.Contains("title"))
+        if (sceneName.Contains("menu") || sceneName.Contains("title"))
         {
             isGameActive = false;
-            PlayMainTheme(); // Instantly spin up main menu track
+            PlayMainTheme(); 
         }
         else
         {
@@ -167,7 +177,6 @@ public class GameManager : MonoBehaviour
         isGameActive = false;
         currentBonusTime = startingBonusTime;
 
-        // --- FIX: Start level-specific music IMMEDIATELY during the countdown panel! ---
         PlayMainTheme();
 
         Debug.Log($"HOW HIGH CAN YOU GET? Level starting in {levelStartDelay} seconds...");
@@ -202,7 +211,6 @@ public class GameManager : MonoBehaviour
             PlayerPrefs.SetInt("HighScore", highScore);
             PlayerPrefs.Save();
         }
-        Debug.Log($"Score: {score} | High Score: {highScore}");
     }
 
     public void PlayerDeath()
@@ -211,9 +219,7 @@ public class GameManager : MonoBehaviour
         isGameActive = false;
 
         StopMusic();
-
         playerLives--;
-        Debug.Log($"Player Died! Lives remaining: {playerLives}");
 
         StartCoroutine(PlayerDeathSequenceRoutine());
     }
@@ -224,7 +230,6 @@ public class GameManager : MonoBehaviour
         isGameActive = false;
 
         StopMusic();
-
         StartCoroutine(LevelCompleteSequenceRoutine());
     }
 
@@ -253,7 +258,6 @@ public class GameManager : MonoBehaviour
 
         int finalBonusAward = Mathf.FloorToInt(currentBonusTime);
         AddScore(finalBonusAward);
-        Debug.Log($"Level Complete! Awarded {finalBonusAward} Bonus Points!");
 
         yield return new WaitForSeconds(victoryDelay);
 
@@ -263,11 +267,11 @@ public class GameManager : MonoBehaviour
     private void GameOver()
     {
         Debug.Log("GAME OVER. Insert Coin to Play Again.");
-
         playerLives = 3;
         score = 0;
+        currentSequenceIndex = 0;
 
-        SceneManager.LoadScene(0); // Take us back to Main Menu
+        SceneManager.LoadScene(0); 
     }
 
     private IEnumerator PlayerDeathSequenceRoutine()
