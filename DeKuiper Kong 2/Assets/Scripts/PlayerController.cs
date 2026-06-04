@@ -44,6 +44,10 @@ public class PlayerController : MonoBehaviour
     private Transform activeLadder;
     private bool isFacingRight = true;
 
+    // --- MOBILE INPUT TRACKING ---
+    private float mobileHorizontal = 0f;
+    private float mobileVertical = 0f;
+
     // Hammer State
     private bool isHammering = false;
     private float hammerTimer = 0f;
@@ -75,25 +79,25 @@ public class PlayerController : MonoBehaviour
         audioSource = GetComponent<AudioSource>();
         animator = GetComponent<Animator>();
 
-        // --- FIX 1: Initialize fall tracking safely on setup so it doesn't default to 0 ---
         highestPointInAir = transform.position.y;
         isGrounded = Physics2D.OverlapCircle(groundCheck.position, checkRadius, groundLayer);
     }
 
     void Update()
     {
-        // --- ARCADE CINEMATIC FREEZE ---
         if (GameManager.Instance != null && !GameManager.Instance.IsGameActive())
         {
-            // --- FIX 2: Keep tracking position and ground state during the intro countdown ---
             highestPointInAir = transform.position.y;
             isGrounded = Physics2D.OverlapCircle(groundCheck.position, checkRadius, groundLayer);
             return;
         }
 
-        // 1. Gather Inputs
+        // 1. Gather Inputs (Combines Keyboard for testing and Mobile for production)
         horizontalInput = Input.GetAxisRaw("Horizontal");
+        if (mobileHorizontal != 0) horizontalInput = mobileHorizontal;
+
         verticalInput = Input.GetAxisRaw("Vertical");
+        if (mobileVertical != 0) verticalInput = mobileVertical;
 
         // 2. Environment Overlap Checks
         bool wasGrounded = isGrounded;
@@ -112,7 +116,6 @@ public class PlayerController : MonoBehaviour
             highestPointInAir = transform.position.y;
         }
 
-        // The exact frame we land, calculate the total fall distance
         if (!wasGrounded && isGrounded)
         {
             float fallDistance = highestPointInAir - transform.position.y;
@@ -127,7 +130,6 @@ public class PlayerController : MonoBehaviour
             highestPointInAir = transform.position.y;
         }
 
-        // --- Ledge Fall Fix ---
         if (wasGrounded && !isGrounded && rb.linearVelocity.y <= 0)
         {
             lockedJumpXVelocity = horizontalInput * walkSpeed;
@@ -193,8 +195,16 @@ public class PlayerController : MonoBehaviour
         // 6. Animation State Updates
         UpdateAnimations();
 
-        // 7. Jump Input
-        if (Input.GetButtonDown("Jump") && isGrounded && !isClimbing && !isHammering)
+        // 7. PC Jump Input (Mobile uses the public method below)
+        if (Input.GetButtonDown("Jump"))
+        {
+            ExecuteJump();
+        }
+    }
+
+    private void ExecuteJump()
+    {
+        if (isGrounded && !isClimbing && !isHammering)
         {
             rb.linearVelocity = new Vector2(rb.linearVelocity.x, jumpForce);
 
@@ -450,4 +460,18 @@ public class PlayerController : MonoBehaviour
             Gizmos.DrawWireSphere(hammerHitBox.position, hammerHitRadius);
         }
     }
+
+    // ==========================================
+    // --- MOBILE UI BUTTON PUBLIC METHODS ---
+    // ==========================================
+
+    public void MoveLeftDown() { mobileHorizontal = -1f; }
+    public void MoveRightDown() { mobileHorizontal = 1f; }
+    public void StopHorizontal() { mobileHorizontal = 0f; }
+
+    public void ClimbUpDown() { mobileVertical = 1f; }
+    public void ClimbDownDown() { mobileVertical = -1f; }
+    public void StopVertical() { mobileVertical = 0f; }
+
+    public void MobileJumpDown() { ExecuteJump(); }
 }

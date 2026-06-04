@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 56685b31dff00d34da2f429e029dd10b
+timeCreated: 1483788594
+licenseType: Store
+DefaultImporter:
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 75319
+  packageName: Controller Buttons and Thumbstick
+  packageVersion: 1.1
+  assetPath: Assets/Xbox Controller/Controller sheets/demo scene.unity
+  uploadId: 369216
