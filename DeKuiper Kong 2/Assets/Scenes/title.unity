@@ -403,6 +403,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 946506368080958930, guid: e1504b13bb0831240ae222798c43a23b, type: 3}
+      propertyPath: elevatorStageMusic
+      value: 
+      objectReference: {fileID: 8300000, guid: e4190bffcf0b58045b71d892460f65bc, type: 3}
     - target: {fileID: 5196211597344141699, guid: e1504b13bb0831240ae222798c43a23b, type: 3}
       propertyPath: m_LocalPosition.x
       value: 1.10753

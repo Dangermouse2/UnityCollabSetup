@@ -1448,7 +1448,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 36a995b602e832b46a5725deaecdd25b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MovingElevator
-  moveSpeed: 1
+  moveSpeed: 0.75
   direction: 1
   bottomBoundary: {fileID: 1838750906}
   topBoundary: {fileID: 1395926843}
@@ -4025,7 +4025,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 36a995b602e832b46a5725deaecdd25b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MovingElevator
-  moveSpeed: 1
+  moveSpeed: 0.75
   direction: 1
   bottomBoundary: {fileID: 1838750906}
   topBoundary: {fileID: 1395926843}
@@ -4559,7 +4559,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 36a995b602e832b46a5725deaecdd25b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MovingElevator
-  moveSpeed: 1
+  moveSpeed: 0.75
   direction: -1
   bottomBoundary: {fileID: 1836732232}
   topBoundary: {fileID: 1992324558}
@@ -6035,10 +6035,10 @@ Camera:
   m_LensShift: {x: 0, y: 0}
   m_NormalizedViewPortRect:
     serializedVersion: 2
-    x: 0.48015872
+    x: 0
     y: 0
-    width: 0.9594356
-    height: 0.96
+    width: 0.99941206
+    height: 0.99999994
   near clip plane: 0.3
   far clip plane: 1000
   field of view: 60
@@ -8828,7 +8828,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 36a995b602e832b46a5725deaecdd25b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MovingElevator
-  moveSpeed: 1
+  moveSpeed: 0.75
   direction: -1
   bottomBoundary: {fileID: 1836732232}
   topBoundary: {fileID: 1992324558}
@@ -9378,7 +9378,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 36a995b602e832b46a5725deaecdd25b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MovingElevator
-  moveSpeed: 1
+  moveSpeed: 0.75
   direction: -1
   bottomBoundary: {fileID: 1836732232}
   topBoundary: {fileID: 1992324558}
@@ -11760,7 +11760,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 36a995b602e832b46a5725deaecdd25b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MovingElevator
-  moveSpeed: 1
+  moveSpeed: 0.75
   direction: 1
   bottomBoundary: {fileID: 1838750906}
   topBoundary: {fileID: 1395926843}
@@ -12153,6 +12153,18 @@ PrefabInstance:
       propertyPath: m_Layer
       value: 7
       objectReference: {fileID: 0}
+    - target: {fileID: 7774028984380911802, guid: 0255056a7b57c9749bcf6f1bd46b7919, type: 3}
+      propertyPath: m_Size.x
+      value: 0.65
+      objectReference: {fileID: 0}
+    - target: {fileID: 7774028984380911802, guid: 0255056a7b57c9749bcf6f1bd46b7919, type: 3}
+      propertyPath: m_Size.y
+      value: 1.9
+      objectReference: {fileID: 0}
+    - target: {fileID: 7774028984380911802, guid: 0255056a7b57c9749bcf6f1bd46b7919, type: 3}
+      propertyPath: m_Offset.y
+      value: -0.23
+      objectReference: {fileID: 0}
     - target: {fileID: 8445744422207174850, guid: 0255056a7b57c9749bcf6f1bd46b7919, type: 3}
       propertyPath: jumpForce
       value: 3.5
@@ -12191,7 +12203,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8445744422207174850, guid: 0255056a7b57c9749bcf6f1bd46b7919, type: 3}
       propertyPath: lethalFallDistance
-      value: 1.25
+      value: 1.65
       objectReference: {fileID: 0}
     - target: {fileID: 8741077695159413650, guid: 0255056a7b57c9749bcf6f1bd46b7919, type: 3}
       propertyPath: m_Name
