@@ -1159,6 +1159,7 @@ GameObject:
   - component: {fileID: 192407081}
   - component: {fileID: 192407080}
   - component: {fileID: 192407079}
+  - component: {fileID: 192407082}
   m_Layer: 5
   m_Name: Left
   m_TagString: Untagged
@@ -1228,19 +1229,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 192407080}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 7598333703112818252}
-        m_TargetAssemblyTypeName: PlayerController, Assembly-CSharp
-        m_MethodName: MoveLeftDown
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
 --- !u!114 &192407080
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1279,6 +1268,51 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 192407077}
   m_CullTransparentMesh: 1
+--- !u!114 &192407082
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 192407077}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d0b148fe25e99eb48b9724523833bab1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.EventSystems.EventTrigger
+  m_Delegates:
+  - eventID: 2
+    callback:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 7598333703112818252}
+          m_TargetAssemblyTypeName: PlayerController, Assembly-CSharp
+          m_MethodName: MoveLeftDown
+          m_Mode: 1
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
+  - eventID: 3
+    callback:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 7598333703112818252}
+          m_TargetAssemblyTypeName: PlayerController, Assembly-CSharp
+          m_MethodName: StopHorizontal
+          m_Mode: 1
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
 --- !u!1 &196587691
 GameObject:
   m_ObjectHideFlags: 0
@@ -1294,7 +1328,7 @@ GameObject:
   - component: {fileID: 196587694}
   - component: {fileID: 196587693}
   m_Layer: 3
-  m_Name: Girder_0 (6)
+  m_Name: Girder_M (6)
   m_TagString: Ground
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2492,7 +2526,7 @@ PrefabInstance:
   serializedVersion: 2
   m_Modification:
     serializedVersion: 3
-    m_TransformParent: {fileID: 897358963}
+    m_TransformParent: {fileID: 365321699}
     m_Modifications:
     - target: {fileID: 1295102062010326201, guid: 405188b53ea61c84d8336651f281edab, type: 3}
       propertyPath: m_Name
@@ -2583,6 +2617,43 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 405188b53ea61c84d8336651f281edab, type: 3}
+--- !u!1 &365321698
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 365321699}
+  m_Layer: 0
+  m_Name: disappearing
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &365321699
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 365321698}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 843013331}
+  - {fileID: 1214022317}
+  - {fileID: 377114774}
+  - {fileID: 483555824}
+  - {fileID: 84527401}
+  - {fileID: 1956620302}
+  m_Father: {fileID: 897358963}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &377114774 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 1518602194987865517, guid: 405188b53ea61c84d8336651f281edab, type: 3}
@@ -4212,6 +4283,29 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fcf7b14019bbbce4091ad262fe99c1c8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::RivetManager
+  bossAnimator: {fileID: 1220067894}
+  bossTransform: {fileID: 1220067896}
+  bossFallTarget: {fileID: 949716162}
+  fallTriggerName: Fall
+  fallDuration: 3
+  coyoteTimeDelay: 1
+  ladders:
+  - {fileID: 1773738080}
+  - {fileID: 1823507884}
+  - {fileID: 1034368700}
+  - {fileID: 1935954660}
+  - {fileID: 1424637142}
+  - {fileID: 821968392}
+  platforms:
+  - {fileID: 768199089}
+  - {fileID: 925236110}
+  - {fileID: 1135715813}
+  - {fileID: 196587692}
+  platformDropOffset: 1
+  playerTransform: {fileID: 1955610218}
+  playerSafeSpot: {fileID: 1674364645}
+  princessTransform: {fileID: 1798016963}
+  princessSafeSpot: {fileID: 1798016963}
 --- !u!4 &676967199
 Transform:
   m_ObjectHideFlags: 0
@@ -4450,7 +4544,7 @@ GameObject:
   - component: {fileID: 768199091}
   - component: {fileID: 768199090}
   m_Layer: 3
-  m_Name: Girder_0 (1)
+  m_Name: Girder_M (1)
   m_TagString: Ground
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -4687,7 +4781,7 @@ PrefabInstance:
   serializedVersion: 2
   m_Modification:
     serializedVersion: 3
-    m_TransformParent: {fileID: 897358963}
+    m_TransformParent: {fileID: 365321699}
     m_Modifications:
     - target: {fileID: 1295102062010326201, guid: 405188b53ea61c84d8336651f281edab, type: 3}
       propertyPath: m_Name
@@ -5049,6 +5143,7 @@ GameObject:
   - component: {fileID: 813719835}
   - component: {fileID: 813719834}
   - component: {fileID: 813719833}
+  - component: {fileID: 813719836}
   m_Layer: 5
   m_Name: Down
   m_TagString: Untagged
@@ -5118,19 +5213,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 813719834}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 7598333703112818252}
-        m_TargetAssemblyTypeName: PlayerController, Assembly-CSharp
-        m_MethodName: ClimbDownDown
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
 --- !u!114 &813719834
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5169,6 +5252,56 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 813719831}
   m_CullTransparentMesh: 1
+--- !u!114 &813719836
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 813719831}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d0b148fe25e99eb48b9724523833bab1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.EventSystems.EventTrigger
+  m_Delegates:
+  - eventID: 2
+    callback:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 7598333703112818252}
+          m_TargetAssemblyTypeName: PlayerController, Assembly-CSharp
+          m_MethodName: ClimbDownDown
+          m_Mode: 1
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
+  - eventID: 3
+    callback:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 7598333703112818252}
+          m_TargetAssemblyTypeName: PlayerController, Assembly-CSharp
+          m_MethodName: StopVertical
+          m_Mode: 1
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
+--- !u!1 &821968392 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 1295102062010326201, guid: 405188b53ea61c84d8336651f281edab, type: 3}
+  m_PrefabInstance: {fileID: 1189827595}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &843013331 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 1518602194987865517, guid: 405188b53ea61c84d8336651f281edab, type: 3}
@@ -5314,20 +5447,15 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
+  - {fileID: 365321699}
   - {fileID: 1146978050}
   - {fileID: 1160638788}
-  - {fileID: 843013331}
   - {fileID: 38798944}
-  - {fileID: 1214022317}
-  - {fileID: 377114774}
   - {fileID: 1664401767}
   - {fileID: 1949776822}
-  - {fileID: 483555824}
   - {fileID: 624226788}
   - {fileID: 1814389567}
   - {fileID: 716028619}
-  - {fileID: 84527401}
-  - {fileID: 1956620302}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &897830816
@@ -5473,7 +5601,7 @@ GameObject:
   - component: {fileID: 925236112}
   - component: {fileID: 925236111}
   m_Layer: 3
-  m_Name: Girder_0 (2)
+  m_Name: Girder_M (2)
   m_TagString: Ground
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -5704,6 +5832,37 @@ PlatformEffector2D:
   m_UseSideFriction: 0
   m_UseSideBounce: 0
   m_SideArc: 1
+--- !u!1 &949716161
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 949716162}
+  m_Layer: 0
+  m_Name: FallPoint
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &949716162
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 949716161}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -0.54, y: -2.67, z: 0}
+  m_LocalScale: {x: 0.4, y: 0.4, z: 0.4}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &990843476
 GameObject:
   m_ObjectHideFlags: 0
@@ -5783,6 +5942,7 @@ GameObject:
   - component: {fileID: 1025484076}
   - component: {fileID: 1025484075}
   - component: {fileID: 1025484074}
+  - component: {fileID: 1025484077}
   m_Layer: 5
   m_Name: Up
   m_TagString: Untagged
@@ -5852,19 +6012,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1025484075}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 7598333703112818252}
-        m_TargetAssemblyTypeName: PlayerController, Assembly-CSharp
-        m_MethodName: ClimbUpDown
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
 --- !u!114 &1025484075
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5903,6 +6051,56 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1025484072}
   m_CullTransparentMesh: 1
+--- !u!114 &1025484077
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1025484072}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d0b148fe25e99eb48b9724523833bab1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.EventSystems.EventTrigger
+  m_Delegates:
+  - eventID: 2
+    callback:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 7598333703112818252}
+          m_TargetAssemblyTypeName: PlayerController, Assembly-CSharp
+          m_MethodName: ClimbUpDown
+          m_Mode: 1
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
+  - eventID: 3
+    callback:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 7598333703112818252}
+          m_TargetAssemblyTypeName: PlayerController, Assembly-CSharp
+          m_MethodName: StopVertical
+          m_Mode: 1
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
+--- !u!1 &1034368700 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 1295102062010326201, guid: 405188b53ea61c84d8336651f281edab, type: 3}
+  m_PrefabInstance: {fileID: 331077758}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1045605618
 GameObject:
   m_ObjectHideFlags: 0
@@ -6035,7 +6233,7 @@ Camera:
     x: 0
     y: 0
     width: 1
-    height: 0.9997323
+    height: 0.99969953
   near clip plane: 0.3
   far clip plane: 1000
   field of view: 60
@@ -6149,6 +6347,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1090539968}
   - component: {fileID: 1090539967}
+  - component: {fileID: 1090539969}
   m_Layer: 0
   m_Name: Wall (2)
   m_TagString: Wall
@@ -6230,6 +6429,52 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!61 &1090539969
+BoxCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1090539965}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_ForceSendLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ForceReceiveLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ContactCaptureLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_CallbackLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_IsTrigger: 0
+  m_UsedByEffector: 0
+  m_CompositeOperation: 0
+  m_CompositeOrder: 0
+  m_Offset: {x: 0, y: 0}
+  m_SpriteTilingProperty:
+    border: {x: 0, y: 0, z: 0, w: 0}
+    pivot: {x: 0.5, y: 0.5}
+    oldSize: {x: 1, y: 1}
+    newSize: {x: 0.16, y: 0.16}
+    adaptiveTilingThreshold: 0.5
+    drawMode: 0
+    adaptiveTiling: 0
+  m_AutoTiling: 0
+  m_Size: {x: 1, y: 1}
+  m_EdgeRadius: 0
 --- !u!1 &1135715812
 GameObject:
   m_ObjectHideFlags: 0
@@ -6245,7 +6490,7 @@ GameObject:
   - component: {fileID: 1135715815}
   - component: {fileID: 1135715814}
   m_Layer: 3
-  m_Name: Girder_0 (4)
+  m_Name: Girder_M (4)
   m_TagString: Ground
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -6492,7 +6737,7 @@ PrefabInstance:
   serializedVersion: 2
   m_Modification:
     serializedVersion: 3
-    m_TransformParent: {fileID: 897358963}
+    m_TransformParent: {fileID: 365321699}
     m_Modifications:
     - target: {fileID: 1295102062010326201, guid: 405188b53ea61c84d8336651f281edab, type: 3}
       propertyPath: m_Name
@@ -6799,7 +7044,7 @@ BoxCollider2D:
     drawMode: 2
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 2.72, y: 0.22}
+  m_Size: {x: 5.84, y: 0.22}
   m_EdgeRadius: 0
 --- !u!212 &1243293524
 SpriteRenderer:
@@ -6916,20 +7161,20 @@ CompositeCollider2D:
   m_ColliderPaths:
   - m_Collider: {fileID: 1243293523}
     m_ColliderPaths:
-    - - X: 6800000
+    - - X: 14600000
         Y: 1100000
-      - X: -6800000
+      - X: -14600000
         Y: 1100000
-      - X: -6800000
+      - X: -14600000
         Y: 0
-      - X: 6800000
+      - X: 14600000
         Y: 0
   m_CompositePaths:
     m_Paths:
-    - - {x: 0.6799707, y: 0}
-      - {x: 0.6799707, y: 0.11}
-      - {x: -0.68, y: 0.1099707}
-      - {x: -0.6799707, y: 0}
+    - - {x: 1.4599707, y: 0}
+      - {x: 1.4599707, y: 0.11}
+      - {x: -1.46, y: 0.1099707}
+      - {x: -1.4599707, y: 0}
   m_VertexDistance: 0.0005
   m_OffsetDistance: 0.00005
   m_UseDelaunayMesh: 0
@@ -7442,6 +7687,7 @@ GameObject:
   - component: {fileID: 1400297875}
   - component: {fileID: 1400297874}
   - component: {fileID: 1400297873}
+  - component: {fileID: 1400297876}
   m_Layer: 5
   m_Name: Right
   m_TagString: Untagged
@@ -7511,19 +7757,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1400297874}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 7598333703112818252}
-        m_TargetAssemblyTypeName: PlayerController, Assembly-CSharp
-        m_MethodName: MoveRightDown
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
 --- !u!114 &1400297874
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -7562,6 +7796,56 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1400297871}
   m_CullTransparentMesh: 1
+--- !u!114 &1400297876
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1400297871}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d0b148fe25e99eb48b9724523833bab1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.EventSystems.EventTrigger
+  m_Delegates:
+  - eventID: 2
+    callback:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 7598333703112818252}
+          m_TargetAssemblyTypeName: PlayerController, Assembly-CSharp
+          m_MethodName: MoveRightDown
+          m_Mode: 1
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
+  - eventID: 3
+    callback:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 7598333703112818252}
+          m_TargetAssemblyTypeName: PlayerController, Assembly-CSharp
+          m_MethodName: StopHorizontal
+          m_Mode: 1
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
+--- !u!1 &1424637142 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 1295102062010326201, guid: 405188b53ea61c84d8336651f281edab, type: 3}
+  m_PrefabInstance: {fileID: 775219913}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1486645766
 GameObject:
   m_ObjectHideFlags: 0
@@ -8750,7 +9034,7 @@ PrefabInstance:
   serializedVersion: 2
   m_Modification:
     serializedVersion: 3
-    m_TransformParent: {fileID: 897358963}
+    m_TransformParent: {fileID: 365321699}
     m_Modifications:
     - target: {fileID: 1295102062010326201, guid: 405188b53ea61c84d8336651f281edab, type: 3}
       propertyPath: m_Name
@@ -8841,13 +9125,44 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 405188b53ea61c84d8336651f281edab, type: 3}
+--- !u!1 &1674364644
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1674364645}
+  m_Layer: 0
+  m_Name: SafeSpot
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1674364645
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1674364644}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 1.21, y: -0.05, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1798016963}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &1705540897
 PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Modification:
     serializedVersion: 3
-    m_TransformParent: {fileID: 897358963}
+    m_TransformParent: {fileID: 365321699}
     m_Modifications:
     - target: {fileID: 1295102062010326201, guid: 405188b53ea61c84d8336651f281edab, type: 3}
       propertyPath: m_Name
@@ -8938,6 +9253,11 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 405188b53ea61c84d8336651f281edab, type: 3}
+--- !u!1 &1773738080 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 1295102062010326201, guid: 405188b53ea61c84d8336651f281edab, type: 3}
+  m_PrefabInstance: {fileID: 1705540897}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1777788733
 GameObject:
   m_ObjectHideFlags: 0
@@ -9235,7 +9555,6 @@ GameObject:
   - component: {fileID: 1798016963}
   - component: {fileID: 1798016962}
   - component: {fileID: 1798016961}
-  - component: {fileID: 1798016965}
   - component: {fileID: 1798016964}
   m_Layer: 0
   m_Name: Ricky_Idle_0
@@ -9337,7 +9656,8 @@ Transform:
   m_LocalPosition: {x: -0.52, y: 3.516, z: 0}
   m_LocalScale: {x: 0.63, y: 0.63, z: 0.63}
   m_ConstrainProportionsScale: 1
-  m_Children: []
+  m_Children:
+  - {fileID: 1674364645}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1798016964
@@ -9352,52 +9672,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4baf34bac1135a247ac3975d746fe2d3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::VictoryGoal
---- !u!61 &1798016965
-BoxCollider2D:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1798016960}
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Density: 1
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_ForceSendLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_ForceReceiveLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_ContactCaptureLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_CallbackLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_IsTrigger: 1
-  m_UsedByEffector: 0
-  m_CompositeOperation: 0
-  m_CompositeOrder: 0
-  m_Offset: {x: 0.7, y: 0}
-  m_SpriteTilingProperty:
-    border: {x: 0, y: 0, z: 0, w: 0}
-    pivot: {x: 0.5, y: 0.5}
-    oldSize: {x: 0.58, y: 1.17}
-    newSize: {x: 0.58, y: 1.17}
-    adaptiveTilingThreshold: 0.5
-    drawMode: 0
-    adaptiveTiling: 0
-  m_AutoTiling: 0
-  m_Size: {x: 2.12, y: 1.17}
-  m_EdgeRadius: 0
 --- !u!4 &1814389567 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 1518602194987865517, guid: 405188b53ea61c84d8336651f281edab, type: 3}
@@ -9541,6 +9815,11 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1823507884 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 1295102062010326201, guid: 405188b53ea61c84d8336651f281edab, type: 3}
+  m_PrefabInstance: {fileID: 1986936014}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1862264656
 GameObject:
   m_ObjectHideFlags: 0
@@ -9929,6 +10208,11 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 405188b53ea61c84d8336651f281edab, type: 3}
+--- !u!1 &1935954660 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 1295102062010326201, guid: 405188b53ea61c84d8336651f281edab, type: 3}
+  m_PrefabInstance: {fileID: 1665191425}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &1949776822 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 1518602194987865517, guid: 405188b53ea61c84d8336651f281edab, type: 3}
@@ -10280,7 +10564,7 @@ PrefabInstance:
   serializedVersion: 2
   m_Modification:
     serializedVersion: 3
-    m_TransformParent: {fileID: 897358963}
+    m_TransformParent: {fileID: 365321699}
     m_Modifications:
     - target: {fileID: 1295102062010326201, guid: 405188b53ea61c84d8336651f281edab, type: 3}
       propertyPath: m_Name
@@ -11032,10 +11316,11 @@ SceneRoots:
   - {fileID: 311922089}
   - {fileID: 1090539968}
   - {fileID: 1862264659}
-  - {fileID: 7598333703112818251}
   - {fileID: 1644026116}
   - {fileID: 227680568}
+  - {fileID: 7598333703112818251}
   - {fileID: 462566004}
   - {fileID: 676967199}
   - {fileID: 1976339030}
   - {fileID: 791044674}
+  - {fileID: 949716162}
