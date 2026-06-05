@@ -9,6 +9,9 @@ EditorBuildSettings:
     path: Assets/Scenes/title.unity
     guid: 97fdc9bd71e57994db1edcc0cf9cf2ed
   - enabled: 1
+    path: Assets/Scenes/IntroVideo.unity
+    guid: 75fec181fe6c8f844bcdd90a4d1eb34c
+  - enabled: 1
     path: Assets/Scenes/GirderStage.unity
     guid: ac1ceeb348940eb4fb18e322e7777d8d
   - enabled: 1
